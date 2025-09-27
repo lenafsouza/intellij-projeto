@@ -1,87 +1,291 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Cadastro de Usuário</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Biblioteca</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<h1>Cadastro de Usuário</h1>
+<h1>Cadastro de Livros</h1>
 
-<!-- Criar usuário -->
-<h2>Criar</h2>
-<input type="text" id="nome" placeholder="Nome">
-<input type="email" id="email" placeholder="Email">
-<button onclick="criar()">Salvar</button>
+<!-- Criar livro -->
+<section class="card" aria-labelledby="cadastrarTitle">
+    <h2 id="cadastrarTitle">Cadastrar</h2>
+    <label for="titulo">Título do Livro</label>
+    <input type="text" id="titulo" placeholder="Título do Livro" />
 
-<hr>
+    <label for="autor">Autor</label>
+    <input type="text" id="autor" placeholder="Autor" />
 
-<!-- Buscar usuário -->
-<h2>Buscar</h2>
-<input type="email" id="buscarEmail" placeholder="Email">
-<button onclick="buscar()">Buscar</button>
-<pre id="resultadoBuscar"></pre>
+    <label for="anoPublicacao">Ano de Publicação</label>
+    <input type="number" id="anoPublicacao" placeholder="Ano de Publicação" min="0" />
 
-<hr>
+    <label for="status">Status</label>
+    <select id="status">
+        <option value="Disponível">Disponível</option>
+        <option value="Indisponível">Indisponível</option>
+    </select>
+    <button type="button" onclick="criar()">Salvar</button>
+</section>
 
-<!-- Deletar usuário -->
-<h2>Deletar</h2>
-<input type="email" id="deletarEmail" placeholder="Email">
-<button onclick="deletar()">Deletar</button>
+<!-- Buscar livro -->
+<section class="card" aria-labelledby="buscarTitle">
+    <h2 id="buscarTitle">Buscar</h2>
+    <label for="buscarId">ID do Livro</label>
+    <input type="number" id="buscarId" placeholder="ID do Livro" min="1" />
+    <button type="button" onclick="buscar()">Buscar</button>
+    <pre id="resultadoBuscar" aria-live="polite" role="region"></pre>
+</section>
 
-<hr>
+<!-- Atualizar livro -->
+<section class="card" aria-labelledby="editarTitle">
+    <h2 id="editarTitle">Editar</h2>
+    <label for="atualizarId">ID do Livro</label>
+    <input type="number" id="atualizarId" placeholder="ID do Livro" min="1" />
+    <button type="button" onclick="carregarDados()">Carregar dados</button>
 
-<!-- Atualizar usuário -->
-<h2>Atualizar</h2>
-<input type="number" id="id" placeholder="ID">
-<input type="text" id="novoNome" placeholder="Novo Nome">
-<input type="email" id="novoEmail" placeholder="Novo Email">
-<button onclick="atualizar()">Atualizar</button>
+    <label for="novoTitulo">Título</label>
+    <input type="text" id="novoTitulo" placeholder="Título" />
+
+    <label for="novoAutor">Autor</label>
+    <input type="text" id="novoAutor" placeholder="Autor" />
+
+    <label for="novoAno">Ano de Publicação</label>
+    <input type="number" id="novoAno" placeholder="Ano de Publicação" min="0" />
+
+    <label for="novoStatus">Status</label>
+    <select id="novoStatus">
+        <option value="Disponível">Disponível</option>
+        <option value="Indisponível">Indisponível</option>
+    </select>
+    <button type="button" onclick="atualizar()">Editar</button>
+</section>
+
+<!-- Deletar livro -->
+<section class="card" aria-labelledby="deletarTitle">
+    <h2 id="deletarTitle">Deletar</h2>
+    <label for="deletarId">ID do Livro</label>
+    <input type="number" id="deletarId" placeholder="ID do Livro" min="1" />
+    <button type="button" class="delete" onclick="deletar()">Deletar</button>
+</section>
+
+<!-- Listar livros -->
+<section class="card" aria-labelledby="listarTitle">
+    <h2 id="listarTitle">Listar Livros</h2>
+    <button type="button" onclick="listar()">Atualizar lista</button>
+    <table id="tabelaLivros" border="1" style="width:100%; margin-top:10px; border-collapse: collapse;">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Título</th>
+            <th scope="col">Autor</th>
+            <th scope="col">Ano</th>
+            <th scope="col">Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Linhas serão inseridas aqui via JS -->
+        </tbody>
+    </table>
+</section>
 
 <script>
-    const api = "/usuario";
+    const api = "/livros"; // endpoint do backend para livros
 
     async function criar() {
-      const resp = await fetch(api, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nome: document.getElementById("nome").value,
-          email: document.getElementById("email").value
-        })
-      });
-      alert(resp.ok ? "Usuário criado!" : "Erro ao criar!");
+        const titulo = document.getElementById("titulo").value.trim();
+        const autor = document.getElementById("autor").value.trim();
+        const anoStr = document.getElementById("anoPublicacao").value.trim();
+        const status = document.getElementById("status").value;
+
+        if (!titulo || !autor || !anoStr || !status) {
+            alert("Por favor, preencha os campos que faltam.");
+            return;
+        }
+
+        const ano = parseInt(anoStr);
+        if (isNaN(ano) || ano < 0) {
+            alert("Por favor, insira um ano válido!");
+            return;
+        }
+
+        const resp = await fetch(api, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                titulo,
+                autor,
+                anoPublicacao: ano,
+                status
+            })
+        });
+
+        if (resp.ok) {
+            alert("Livro cadastrado com sucesso!");
+            limparCamposCriar();
+            listar(); // Atualiza a lista automaticamente após criar
+        } else {
+            alert("Erro ao cadastrar livro!");
+        }
+    }
+
+    function limparCamposCriar() {
+        document.getElementById("titulo").value = "";
+        document.getElementById("autor").value = "";
+        document.getElementById("anoPublicacao").value = "";
+        document.getElementById("status").value = "Disponível";
     }
 
     async function buscar() {
-      const email = document.getElementById("buscarEmail").value;
-      const resp = await fetch(`${api}?email=${encodeURIComponent(email)}`);
-      if (resp.ok) {
-        const data = await resp.json();
-        document.getElementById("resultadoBuscar").innerText = JSON.stringify(data, null, 2);
-      } else {
-        document.getElementById("resultadoBuscar").innerText = "Usuário não encontrado!";
-      }
+        const id = document.getElementById("buscarId").value.trim();
+        if (!id) {
+            alert("Por favor, preencha os campos que faltam.");
+            return;
+        }
+
+        const resp = await fetch(`${api}/${id}`);
+        if (resp.ok) {
+            const data = await resp.json();
+            document.getElementById("resultadoBuscar").innerText = JSON.stringify(data, null, 2);
+        } else {
+            document.getElementById("resultadoBuscar").innerText = "Livro não encontrado!";
+        }
     }
 
     async function deletar() {
-      const email = document.getElementById("deletarEmail").value;
-      const resp = await fetch(`${api}?email=${encodeURIComponent(email)}`, { method: "DELETE" });
-      alert(resp.ok ? "Usuário deletado!" : "Erro ao deletar!");
+        const id = document.getElementById("deletarId").value.trim();
+        if (!id) {
+            alert("Por favor, preencha os campos que faltam.");
+            return;
+        }
+
+        if(!confirm("Tem certeza que deseja deletar o livro com ID " + id + "?")) return;
+
+        const resp = await fetch(`${api}/${id}`, { method: "DELETE" });
+        if (resp.ok) {
+            alert("Livro deletado com sucesso!");
+            document.getElementById("deletarId").value = "";
+            listar(); // Atualiza a lista automaticamente após deletar
+        } else {
+            alert("Erro ao deletar livro!");
+        }
+    }
+
+    async function carregarDados() {
+        const id = document.getElementById("atualizarId").value.trim();
+        if (!id) {
+            alert("Por favor, preencha os campos que faltam.");
+            return;
+        }
+
+        const resp = await fetch(`${api}/${id}`);
+        if (resp.ok) {
+            const livro = await resp.json();
+            document.getElementById("novoTitulo").value = livro.titulo || "";
+            document.getElementById("novoAutor").value = livro.autor || "";
+            document.getElementById("novoAno").value = livro.anoPublicacao || "";
+            document.getElementById("novoStatus").value = livro.status || "Disponível";
+        } else {
+            alert("Livro não encontrado para o ID informado.");
+        }
     }
 
     async function atualizar() {
-      const id = document.getElementById("id").value;
-      const resp = await fetch(`${api}?id=${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nome: document.getElementById("novoNome").value,
-          email: document.getElementById("novoEmail").value
-        })
-      });
-      alert(resp.ok ? "Usuário atualizado!" : "Erro ao atualizar!");
+        const id = document.getElementById("atualizarId").value.trim();
+        const titulo = document.getElementById("novoTitulo").value.trim();
+        const autor = document.getElementById("novoAutor").value.trim();
+        const anoStr = document.getElementById("novoAno").value.trim();
+        const status = document.getElementById("novoStatus").value;
+
+        if (!id || !titulo || !autor || !anoStr || !status) {
+            alert("Por favor, preencha os campos que faltam.");
+            return;
+        }
+
+        const ano = parseInt(anoStr);
+        if (isNaN(ano) || ano < 0) {
+            alert("Por favor, insira um ano válido!");
+            return;
+        }
+
+        const resp = await fetch(`${api}/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                titulo,
+                autor,
+                anoPublicacao: ano,
+                status
+            })
+        });
+
+        if (resp.ok) {
+            alert("Livro editado com sucesso!");
+            limparCamposEditar();
+            listar(); // Atualiza a lista automaticamente após editar
+        } else {
+            alert("Erro ao editar livro!");
+        }
     }
+
+    function limparCamposEditar() {
+        document.getElementById("atualizarId").value = "";
+        document.getElementById("novoTitulo").value = "";
+        document.getElementById("novoAutor").value = "";
+        document.getElementById("novoAno").value = "";
+        document.getElementById("novoStatus").value = "Disponível";
+    }
+
+    async function listar() {
+        const resp = await fetch(api);
+        if (resp.ok) {
+            const livros = await resp.json();
+            const tbody = document.querySelector("#tabelaLivros tbody");
+            tbody.innerHTML = "";
+
+            if (livros.length === 0) {
+                const tr = document.createElement("tr");
+                const td = document.createElement("td");
+                td.colSpan = 5;
+                td.style.textAlign = "center";
+                td.innerText = "Nenhum livro cadastrado.";
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+                return;
+            }
+
+            livros.forEach(livro => {
+                const tr = document.createElement("tr");
+
+                let td = document.createElement("td");
+                td.innerText = livro.id || "";
+                tr.appendChild(td);
+
+                td = document.createElement("td");
+                td.innerText = livro.titulo || "";
+                tr.appendChild(td);
+
+                td = document.createElement("td");
+                td.innerText = livro.autor || "";
+                tr.appendChild(td);
+
+                td = document.createElement("td");
+                td.innerText = livro.anoPublicacao || "";
+                tr.appendChild(td);
+
+                td = document.createElement("td");
+                td.innerText = livro.status || "";
+                tr.appendChild(td);
+
+                tbody.appendChild(tr);
+            });
+        } else {
+            alert("Erro ao buscar a lista de livros.");
+        }
+    }
+
+    window.onload = listar; // Carrega a lista ao abrir a página
 </script>
 </body>
 </html>

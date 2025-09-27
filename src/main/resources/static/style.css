@@ -1,40 +1,137 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    background-color: #f4f6f8;
+    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+    padding: 30px;
     color: #333;
 }
 
+/* Título principal */
 h1 {
-    color: #2c3e50;
     text-align: center;
+    margin-bottom: 40px;
+    color: #2c3e50;
+    text-shadow: 1px 1px 2px #aaa;
 }
 
+/* Subtítulos de seções */
 h2 {
-    margin-top: 20px;
+    margin-top: 0;
+    margin-bottom: 15px;
     color: #34495e;
+    font-size: 18px;
 }
 
-input, button {
-    margin: 5px 0;
-    padding: 8px;
+/* Label padrão */
+label {
+    display: block;
+    margin-top: 12px;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #555;
     font-size: 14px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
 }
 
+/* Cards de formulário */
+.card {
+    background-color: white;
+    padding: 20px 25px;
+    margin-bottom: 25px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* Inputs e selects */
+input[type="text"],
+input[type="number"],
+select {
+    width: 100%;
+    max-width: 350px;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52,152,219,0.5);
+    outline: none;
+}
+
+/* Botões */
 button {
-    background-color: #3498db;
-    color: white;
+    padding: 12px 30px;
+    margin-top: 12px;
+    margin-right: 10px;
     border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    color: white;
+    font-size: 14px;
     cursor: pointer;
-    transition: 0.3s;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: inline-block;
 }
 
 button:hover {
-    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-hr {
-    margin: 20px 0;
+button.delete {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+button.delete:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* Espaçamento entre botões lado a lado */
+button + button {
+    margin-left: 10px;
+}
+
+/* Melhor visual para o <pre> do resultado da busca */
+pre#resultadoBuscar {
+    background-color: #f0f4f8;
+    padding: 15px;
+    border-radius: 8px;
+    max-height: 180px;
+    overflow-y: auto;
+    margin-top: 12px;
+    font-size: 13px;
+    color: #2c3e50;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+    white-space: pre-wrap; /* para quebrar linha no texto JSON */
+    word-wrap: break-word;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+    input[type="text"],
+    input[type="number"],
+    select,
+    button {
+        width: 100%;
+        margin-bottom: 15px;
+        margin-right: 0 !important;
+    }
 }
