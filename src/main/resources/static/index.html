@@ -35,6 +35,7 @@
     <label for="buscarId">ID do Livro</label>
     <input type="number" id="buscarId" placeholder="ID do Livro" min="1" />
     <button type="button" onclick="buscar()">Buscar</button>
+    <button type="button" class="limpar" onclick="limparBusca()">Limpar</button>
     <pre id="resultadoBuscar" aria-live="polite" role="region"></pre>
 </section>
 
@@ -72,9 +73,10 @@
 
 <!-- Listar livros -->
 <section class="card" aria-labelledby="listarTitle">
-    <h2 id="listarTitle">Listar Livros</h2>
-    <button type="button" onclick="listar()">Atualizar lista</button>
-    <table id="tabelaLivros" border="1" style="width:100%; margin-top:10px; border-collapse: collapse;">
+    <h2 id="listarTitle">Lista Livros</h2>
+    <button type="button" onclick="listar()">Atualizar Lista</button>
+    <button type="button" onclick="toggleTabela()" id="toggleTabelaBtn">Esconder Lista</button>
+    <table id="tabelaLivros">
         <thead>
         <tr>
             <th scope="col">ID</th>
@@ -91,7 +93,7 @@
 </section>
 
 <script>
-    const api = "/livros"; // endpoint do backend para livros
+    const api = "/livros";
 
     async function criar() {
         const titulo = document.getElementById("titulo").value.trim();
@@ -113,18 +115,13 @@
         const resp = await fetch(api, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                titulo,
-                autor,
-                anoPublicacao: ano,
-                status
-            })
+            body: JSON.stringify({ titulo, autor, anoPublicacao: ano, status })
         });
 
         if (resp.ok) {
             alert("Livro cadastrado com sucesso!");
             limparCamposCriar();
-            listar(); // Atualiza a lista automaticamente após criar
+            listar();
         } else {
             alert("Erro ao cadastrar livro!");
         }
@@ -153,6 +150,11 @@
         }
     }
 
+    function limparBusca() {
+        document.getElementById("buscarId").value = "";
+        document.getElementById("resultadoBuscar").innerText = "";
+    }
+
     async function deletar() {
         const id = document.getElementById("deletarId").value.trim();
         if (!id) {
@@ -160,13 +162,13 @@
             return;
         }
 
-        if(!confirm("Tem certeza que deseja deletar o livro com ID " + id + "?")) return;
+        if (!confirm("Tem certeza que deseja deletar o livro com ID " + id + "?")) return;
 
         const resp = await fetch(`${api}/${id}`, { method: "DELETE" });
         if (resp.ok) {
             alert("Livro deletado com sucesso!");
             document.getElementById("deletarId").value = "";
-            listar(); // Atualiza a lista automaticamente após deletar
+            listar();
         } else {
             alert("Erro ao deletar livro!");
         }
@@ -187,7 +189,7 @@
             document.getElementById("novoAno").value = livro.anoPublicacao || "";
             document.getElementById("novoStatus").value = livro.status || "Disponível";
         } else {
-            alert("Livro não encontrado para o ID informado.");
+            alert("Livro não encontrado.");
         }
     }
 
@@ -212,18 +214,13 @@
         const resp = await fetch(`${api}/${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                titulo,
-                autor,
-                anoPublicacao: ano,
-                status
-            })
+            body: JSON.stringify({ titulo, autor, anoPublicacao: ano, status })
         });
 
         if (resp.ok) {
             alert("Livro editado com sucesso!");
             limparCamposEditar();
-            listar(); // Atualiza a lista automaticamente após editar
+            listar();
         } else {
             alert("Erro ao editar livro!");
         }
@@ -248,8 +245,9 @@
                 const tr = document.createElement("tr");
                 const td = document.createElement("td");
                 td.colSpan = 5;
-                td.style.textAlign = "center";
                 td.innerText = "Nenhum livro cadastrado.";
+                td.style.textAlign = "center";
+                td.style.color = "#888";
                 tr.appendChild(td);
                 tbody.appendChild(tr);
                 return;
@@ -258,25 +256,11 @@
             livros.forEach(livro => {
                 const tr = document.createElement("tr");
 
-                let td = document.createElement("td");
-                td.innerText = livro.id || "";
-                tr.appendChild(td);
-
-                td = document.createElement("td");
-                td.innerText = livro.titulo || "";
-                tr.appendChild(td);
-
-                td = document.createElement("td");
-                td.innerText = livro.autor || "";
-                tr.appendChild(td);
-
-                td = document.createElement("td");
-                td.innerText = livro.anoPublicacao || "";
-                tr.appendChild(td);
-
-                td = document.createElement("td");
-                td.innerText = livro.status || "";
-                tr.appendChild(td);
+                ["id", "titulo", "autor", "anoPublicacao", "status"].forEach(campo => {
+                    const td = document.createElement("td");
+                    td.innerText = livro[campo] || "";
+                    tr.appendChild(td);
+                });
 
                 tbody.appendChild(tr);
             });
@@ -285,7 +269,22 @@
         }
     }
 
-    window.onload = listar; // Carrega a lista ao abrir a página
+    //window.onload = listar;
+
+    // NOVA FUNÇÃO: Mostrar/esconder tabela
+    function toggleTabela() {
+        const tabela = document.getElementById("tabelaLivros");
+        const botao = document.getElementById("toggleTabelaBtn");
+
+        if (tabela.style.display === "none") {
+            tabela.style.display = "table";
+            botao.innerText = "Esconder Lista";
+        } else {
+            tabela.style.display = "none";
+            botao.innerText = "Mostrar Lista";
+        }
+    }
+
 </script>
 </body>
 </html>

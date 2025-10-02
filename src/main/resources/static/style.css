@@ -75,7 +75,7 @@ select:focus {
     outline: none;
 }
 
-/* Botões */
+/* Botões padrão */
 button {
     padding: 12px 30px;
     margin-top: 12px;
@@ -104,12 +104,22 @@ button.delete:hover {
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-/* Espaçamento entre botões lado a lado */
+/* Botão de limpar */
+button.limpar {
+    background: linear-gradient(135deg, #bdc3c7, #95a5a6);
+}
+
+button.limpar:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Espaçamento entre botões */
 button + button {
     margin-left: 10px;
 }
 
-/* Melhor visual para o <pre> do resultado da busca */
+/* Resultado da busca */
 pre#resultadoBuscar {
     background-color: #f0f4f8;
     padding: 15px;
@@ -120,7 +130,7 @@ pre#resultadoBuscar {
     font-size: 13px;
     color: #2c3e50;
     box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
-    white-space: pre-wrap; /* para quebrar linha no texto JSON */
+    white-space: pre-wrap;
     word-wrap: break-word;
 }
 
@@ -135,3 +145,52 @@ pre#resultadoBuscar {
         margin-right: 0 !important;
     }
 }
+
+/* Estilo da tabela */
+#tabelaLivros {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    overflow: hidden;
+    font-size: 14px;
+    margin-top: 15px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+}
+
+#tabelaLivros thead {
+    background-color: #f4f6f8;
+    color: #2c3e50;
+    font-weight: 600;
+    text-align: left;
+}
+
+#tabelaLivros th,
+#tabelaLivros td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+    color: #444;
+}
+
+#tabelaLivros tbody tr:hover {
+    background-color: #f0f4f8;
+    transition: background-color 0.2s ease-in-out;
+}
+
+#tabelaLivros td[colspan="5"] {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+}
+
+/* Botão de mostrar/esconder lista */
+button#toggleTabelaBtn {
+     background: linear-gradient(135deg, #bdc3c7, #95a5a6);
+}
+
+button#toggleTabelaBtn:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
